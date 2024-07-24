@@ -1,0 +1,74 @@
+{
+  "throughput": [
+    {
+      "model_id"    : "facebook/opt-1.3b",
+      "num_device"  : 1,
+      "throughput"  : 115.53
+    },
+    {
+      "model_id"    : "facebook/opt-1.3b",
+      "num_device"  : 2,
+      "throughput"  : 212.81
+    },
+    {
+      "model_id"    : "facebook/opt-1.3b",
+      "num_device"  : 4,
+      "throughput"  : 362.60
+    },
+    {
+      "model_id"    : "facebook/opt-1.3b",
+      "num_device"  : 8,
+      "throughput"  : 520.94
+    },
+    {
+      "model_id"    : "facebook/opt-6.7b",
+      "num_device"  : 1,
+      "throughput"  : 26.47
+    },
+    {
+      "model_id"    : "facebook/opt-6.7b",
+      "num_device"  : 2,
+      "throughput"  : 51.72
+    },
+    {
+      "model_id"    : "facebook/opt-6.7b",
+      "num_device"  : 4,
+      "throughput"  : 98.33
+    },
+    {
+      "model_id"    : "facebook/opt-6.7b",
+      "num_device"  : 8,
+      "throughput"  : 175.77
+    },
+    {
+      "model_id"    : "facebook/opt-13b",
+      "num_device"  : 2,
+      "throughput"  : 29.78
+    },
+    {
+      "model_id"    : "facebook/opt-13b",
+      "num_device"  : 4,
+      "throughput"  : 53.67
+    },
+    {
+      "model_id"    : "facebook/opt-13b",
+      "num_device"  : 8,
+      "throughput"  : 99.78
+    },
+    {
+      "model_id"    : "facebook/opt-30b",
+      "num_device"  : 4,
+      "throughput"  : 24.22
+    },
+    {
+      "model_id"    : "facebook/opt-30b",
+      "num_device"  : 8,
+      "throughput"  : 46.50
+    },
+    {
+      "model_id"    : "facebook/opt-66b",
+      "num_device"  : 8,
+      "throughput"  : 23.60
+    }
+  ]
+}
