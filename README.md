@@ -8,7 +8,7 @@ Copyright 2023 The HyperAccel. All rights reserved.
     <br>
 <p>
 
-Provides an implementation of python package for HyperAccel LPU™, with a focus on performance and versatility.
+Provides an implementation of python package for Oaken, with a focus on performance and versatility.
 
 # Performance Analyzer
 
