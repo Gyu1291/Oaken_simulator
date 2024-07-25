@@ -10,7 +10,7 @@ Copyright 2023 The HyperAccel. All rights reserved.
 
 Provides an implementation of python package for Oaken, with a focus on performance and versatility.
 
-# Performance Analyzer
+# Oaken: Accelerating Batched LLM Inference via Online Key-Value Cache Compression
 
 
 ## Main features
