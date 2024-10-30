@@ -25,9 +25,9 @@ class HardwareSpec:
     self,
     # Architecture
     mac_per_core    : int   = 32*32*2,     # (Vector Dimension) x (Vector Lane) x 2
-    num_core        : int   = 512,      # 8 x 16, 2D-array
+    num_core        : int   = 128,      # 8 x 16, 2D-array
     frequency       : float = 1,      # GHz
-    max_batch       : int   = 512,       # Maximum support batch size
+    max_batch       : int   = 128,       # Maximum support batch size
     # Utilization
     sum_util        : float = 0.8,      # 0 ~ 1
     gen_util        : float = 0.8,      # 0 ~ 1
@@ -37,8 +37,8 @@ class HardwareSpec:
     power           : int   = 120,      # W
     # Memory
     memory          : str   = "LPDDR5X",
-    capacity        : int   = 512,      # GB
-    bandwidth       : float = 1100       # GB/s
+    capacity        : int   = 48,      # GB
+    bandwidth       : float = 696       # GB/s
   ):
 
     self.mac_per_core = mac_per_core
@@ -60,7 +60,9 @@ class HardwareSpec:
 
 def oaken_kv_size(model, token_length, data_type: str, batch_size: int):
   if "oaken" in data_type:
-    byte_size = 0.6125
+    byte_size = 0.5
+  elif "w4a16" in data_type:
+    byte_size = 2
   else:
     byte_size = get_word_size(data_type)
   kv_size = kv_cache.data_size(model.config, token_length, byte_size, batch_size)
@@ -79,6 +81,8 @@ def check_memory_capacity(model, token_length, data_type: str, batch_size: int, 
 def get_word_size(data_type):
   if data_type == "float32":
     return 4
+  elif data_type == "w4a16":
+    return 0.5
   elif data_type == "float16":
     return 2
   elif data_type == "bfloat16":
@@ -111,7 +115,7 @@ def latency_per_operation(layer_name, operation, num_token, batch_size, data_typ
   # Utilization Configuration
   # Amount of data feeded from memory per cycle
   Amount_per_cycle = arch.bandwidth / arch.frequency
-  Element_per_cycle_from_Memory = Amount_per_cycle // get_word_size(data_type)
+  Element_per_cycle_from_Memory = Amount_per_cycle // get_word_size(data_type) #Number of weight elements comes form memory
 
   # Sharing : number of cores that can share the broadcasted data from memory
   Sharing = 1
@@ -181,7 +185,7 @@ def latency_per_layer(layer, input_token, batch_size, data_type, kv_latency, arc
 # Calculate throughput
 def throughput(model, input_token, output_token, batch_size, data_type, arch: HardwareSpec):
   has_enough_memory, model_size, kv_size = check_memory_capacity(model, (input_token+output_token-1), data_type,  batch_size, arch)
-  print(f'Weight size: {model_size} GB, Key value_size: {kv_size} GB, Total size: {(model_size+kv_size)*1024} MiB')
+  # print(f'Weight size: {model_size} GB, Key value_size: {kv_size} GB, Total size: {(model_size+kv_size)*1024} MiB, Ratio: {model_size/(model_size+kv_size)}: {kv_size/(model_size+kv_size)}')
   if has_enough_memory==False:
     return 0, 0
   
@@ -233,11 +237,11 @@ def throughput(model, input_token, output_token, batch_size, data_type, arch: Ha
   total_latency = summarization_latency + generation_latency
   throughput = (output_token * batch_size) / total_latency
   attention_latency = sum_attention_latency + gen_attention_latency
-  print('Batch Size : {} Output Token : {} Input Token : {}'.format(batch_size, output_token, input_token))
+  #print('Batch Size : {} Output Token : {} Input Token : {}'.format(batch_size, output_token, input_token))
   # print('Summarization Latency : {:.3f} Generation Latency : {:.3f} Total Latency : {:.3f}'.format(summarization_latency, generation_latency, total_latency))
-  print('throughput : {:.2f} token/sec'.format(throughput))
+  #print('throughput : {:.2f} token/sec'.format(throughput))
   # print(f'generation_latecny: {generation_latency}, kv_latency : {kv_latency*(2*min(batch_size, arch.num_core)-1)* math.ceil(batch_size/arch.num_core) * (output_token-1)}')
-  # print(f'attention_latency: {attention_latency}, non_attention_latency: {total_latency - attention_latency}')
+  #print(f'attention_latency: {attention_latency}, non_attention_latency: {total_latency - attention_latency}')
   return throughput, total_latency
 
 ##########################################################################

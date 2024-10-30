@@ -1,7 +1,7 @@
 ##########################################################################
 ##  Web GUI for LPU Performance Profiling
 ##
-##  Authors:  Soongyu   Choi   ( soongyu1291@kaist.ac.kr    )
+##  Authors:  Soongyu Choi   ( soongyu1291@kaist.ac.kr    )
 ##  Version:  Oaken
 ##  Date:     2024-07-25      ( Oaken, init                )
 ##
@@ -22,8 +22,8 @@ from perf_analyzer.utils.lpu_throughput import HardwareSpec
 
 # Architecture Configurations
 MAC               = 32*32*2       # (Vector Dimension) x (Vector Lane) x 2
-NUM_CORE          = 512        # 2D-array
-MAX_BATCH         = 512            # Maximum supported Batch
+NUM_CORE          = 256        # 2D-array
+MAX_BATCH         = 256            # Maximum supported Batch
 LOGIC_FREQUENCY   = 1           # GHz
 CHIP_AREA         = 190           # mm^2
 MAX_POWER         = 120           # W
@@ -70,13 +70,13 @@ def throughput(model_id, data_type):
   model = download_model(model_id)
   # Calculate peak performance
   throughput = avg_application_performance(model, model_id, data_type, arch)
-  print(throughput)
+  # print(throughput)
   return throughput
 
 
 def avg_application_performance(model, model_id, data_type, arch):
   result = {}
-  application_type = ["conv", "code"]
+  application_type = ["code", "conv"]
   batch_list = [64, 128, 256]
   for ap_type in application_type:
     for batch_size in batch_list:
@@ -91,6 +91,10 @@ def avg_application_performance(model, model_id, data_type, arch):
 
         for token in token_pair:
             throughput, _ = lpu_throughput.throughput(model, token[0], token[1], batch_size, data_type, arch)
+            if throughput == 0:
+              print("OOM detected")
+              print(f"Current Batch size: {batch_size}")
+              #exit(0)
             temp_throughputs.append(throughput)
         avg_throughputs = sum(temp_throughputs) / len(temp_throughputs)
       throughputs_per_batch.append(avg_throughputs)
@@ -101,5 +105,5 @@ def avg_application_performance(model, model_id, data_type, arch):
     
 if __name__ == "__main__":
   model_id = "mistralai/Mixtral-8x7B-v0.1"
-  data_type = "oaken"
+  data_type = "float16"
   throughput(model_id, data_type)

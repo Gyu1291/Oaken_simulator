@@ -27,8 +27,8 @@ from perf_analyzer.utils.lpu_throughput import HardwareSpec
 
 # Architecture Configurations
 MAC               = 32*32*2       # (Vector Dimension) x (Vector Lane) x 2
-NUM_CORE          = 512        # 2D-array
-MAX_BATCH         = 512            # Maximum supported Batch
+NUM_CORE          = 256        # 2D-array
+MAX_BATCH         = 256            # Maximum supported Batch
 LOGIC_FREQUENCY   = 1           # GHz
 CHIP_AREA         = 190           # mm^2
 MAX_POWER         = 120           # W
@@ -87,7 +87,7 @@ def throughput(model_id, input_token, output_token, batch_size, data_type, logic
 
 def make_plot(model, input_token, output_token, data_type, arch):
   # Data point candidates
-  batch_list = [1, 16, 32, 48, 64, 80, 96, 112, 128, 256, 512]
+  batch_list = [1, 8, 16, 32, 64, 128, 256]
   label_list = []
   data_list = []
 
@@ -163,7 +163,7 @@ def page():
       with gr.Row():
         # Data precision
         data_type_radio = gr.Radio(
-          choices=["float32", "float16", "bfloat16", "float8", "int8", "oaken", "int4"],
+          choices=["float32", "float16", "bfloat16", "float8", "int8", "oaken", "int4", "w4a16"],
           value="float16",
           label="Data Precision"
         )
